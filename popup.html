@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h2>SkillSync</h2>
+
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <button class="tab active" data-tab="grades">Grades</button>
+      <button class="tab" data-tab="preferences">Preferences</button>
+      <button class="tab" data-tab="uploads">Documents</button>
+    </div>
+
+    <!-- Grades Tab -->
+    <div id="grades-tab" class="tab-content active">
+      <input id="token" type="password" placeholder="Paste API Token" />
+      <button id="saveToken">Save Token</button>
+      <div id="grades"></div>
+      
+      <div class="course-data-section">
+        <button id="scrapeCourses" class="action-button">
+          📚 Scrape Course Data
+        </button>
+        <div id="scrapeStatus" class="status-message"></div>
+        <div id="courseDataSummary" class="data-summary"></div>
+        
+        <!-- Export Buttons -->
+        <div id="exportButtons" class="export-buttons" style="display: none;">
+          <button id="exportCSV" class="export-button">
+            GO!
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferences Tab -->
+    <div id="preferences-tab" class="tab-content">
+      <h3>Career Preferences</h3>
+      
+      <!-- LinkedIn Credentials -->
+      <div class="preference-section">
+        <label for="linkedinEmail">LinkedIn Email</label>
+        <input type="email" id="linkedinEmail" class="preference-input" placeholder="your.email@example.com" />
+      </div>
+
+      <div class="preference-section">
+        <label for="linkedinPassword">LinkedIn Password</label>
+        <input type="password" id="linkedinPassword" class="preference-input" placeholder="Enter your LinkedIn password" />
+      </div>
+
+      <!-- Job Search Keywords -->
+      <div class="preference-section">
+        <label for="jobKeywords">Job Keywords</label>
+        <input type="text" id="jobKeywords" class="preference-input" placeholder="e.g., Software Engineer, Data Analyst" />
+        <small class="input-hint">Keywords to search for in job postings</small>
+      </div>
+
+      <!-- Job Location -->
+      <div class="preference-section">
+        <label for="jobLocation">Job Location</label>
+        <input type="text" id="jobLocation" class="preference-input" placeholder="e.g., New York, NY or Remote" />
+        <small class="input-hint">Preferred job location</small>
+      </div>
+      
+      <!-- Work Location -->
+      <div class="preference-section">
+        <label for="workLocation">Work Location</label>
+        <select id="workLocation" class="preference-select">
+          <option value="">Select preference...</option>
+          <option value="remote">Remote</option>
+          <option value="in-person">In-Person</option>
+          <option value="hybrid">Hybrid</option>
+          <option value="flexible">Flexible</option>
+        </select>
+      </div>
+
+      <!-- Position Type -->
+      <div class="preference-section">
+        <label for="positionType">Position Type</label>
+        <select id="positionType" class="preference-select">
+          <option value="">Select type...</option>
+          <option value="internship">Internship</option>
+          <option value="full-time">Full-Time Job</option>
+          <option value="part-time">Part-Time Job</option>
+          <option value="co-op">Co-op</option>
+          <option value="contract">Contract</option>
+        </select>
+      </div>
+
+      <!-- General Interests -->
+      <div class="preference-section">
+        <label for="generalInterests">General Interests</label>
+        <div class="interests-container">
+          <div class="interest-item">
+            <input type="checkbox" id="software-dev" value="software-development">
+            <label for="software-dev">Software Development</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="data-science" value="data-science">
+            <label for="data-science">Data Science</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="ai-ml" value="ai-ml">
+            <label for="ai-ml">AI/Machine Learning</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="web-dev" value="web-development">
+            <label for="web-dev">Web Development</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="mobile-dev" value="mobile-development">
+            <label for="mobile-dev">Mobile Development</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="cybersecurity" value="cybersecurity">
+            <label for="cybersecurity">Cybersecurity</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="cloud-computing" value="cloud-computing">
+            <label for="cloud-computing">Cloud Computing</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="devops" value="devops">
+            <label for="devops">DevOps</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="product-management" value="product-management">
+            <label for="product-management">Product Management</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="uiux-design" value="uiux-design">
+            <label for="uiux-design">UI/UX Design</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Interests -->
+      <div class="preference-section">
+        <label for="customInterests">Other Interests (comma-separated)</label>
+        <textarea id="customInterests" class="preference-textarea" 
+                  placeholder="e.g., blockchain, IoT, game development"></textarea>
+      </div>
+
+      <!-- Preferred Industries -->
+      <div class="preference-section">
+        <label for="preferredIndustries">Preferred Industries</label>
+        <div class="interests-container">
+          <div class="interest-item">
+            <input type="checkbox" id="tech" value="technology">
+            <label for="tech">Technology</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="finance" value="finance">
+            <label for="finance">Finance</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="healthcare" value="healthcare">
+            <label for="healthcare">Healthcare</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="education" value="education">
+            <label for="education">Education</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="consulting" value="consulting">
+            <label for="consulting">Consulting</label>
+          </div>
+          <div class="interest-item">
+            <input type="checkbox" id="startup" value="startup">
+            <label for="startup">Startup</label>
+          </div>
+        </div>
+      </div>
+
+      <button id="savePreferences" class="submit-button">
+        Save Preferences
+      </button>
+
+      <div class="success-message" id="preferencesSuccess">
+        ✓ Preferences saved successfully!
+      </div>
+    </div>
+
+    <!-- Uploads Tab -->
+    <div id="uploads-tab" class="tab-content">
+      <!-- Resume Upload -->
+      <div class="upload-section">
+        <label for="resumeInput">Resume</label>
+        <div class="upload-area" id="resumeUploadArea">
+          <div class="upload-icon">📄</div>
+          <div class="upload-text">
+            <strong>Click to upload</strong> or drag<br>
+            <span class="allowed-formats">PDF, DOC, DOCX (Max 5MB)</span>
+          </div>
+          <input type="file" id="resumeInput" accept=".pdf,.doc,.docx" />
+        </div>
+        <div class="file-info" id="resumeFileInfo">
+          <div class="file-info-content">
+            <span class="file-name" id="resumeFileName"></span>
+            <span class="file-size" id="resumeFileSize"></span>
+            <button type="button" class="remove-file" id="removeResume">✕</button>
+          </div>
+        </div>
+        <div class="error-message" id="resumeError"></div>
+      </div>
+
+      <!-- Transcript Upload -->
+      <div class="upload-section">
+        <label for="transcriptInput">Transcript</label>
+        <div class="upload-area" id="transcriptUploadArea">
+          <div class="upload-icon">📋</div>
+          <div class="upload-text">
+            <strong>Click to upload</strong> or drag<br>
+            <span class="allowed-formats">PDF, DOC, DOCX (Max 5MB)</span>
+          </div>
+          <input type="file" id="transcriptInput" accept=".pdf,.doc,.docx" />
+        </div>
+        <div class="file-info" id="transcriptFileInfo">
+          <div class="file-info-content">
+            <span class="file-name" id="transcriptFileName"></span>
+            <span class="file-size" id="transcriptFileSize"></span>
+            <button type="button" class="remove-file" id="removeTranscript">✕</button>
+          </div>
+        </div>
+        <div class="error-message" id="transcriptError"></div>
+      </div>
+
+      <button type="button" class="submit-button" id="submitButton" disabled>
+        Upload Documents
+      </button>
+
+      <div class="success-message" id="successMessage">
+        ✓ Documents saved successfully!
+      </div>
+
+      <!-- Uploaded Files List -->
+      <div class="uploaded-files" id="uploadedFilesList" style="display: none;">
+        <h3>Your Documents</h3>
+        <div id="filesList"></div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

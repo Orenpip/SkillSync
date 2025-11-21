@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "SkillSync",
+  "version": "1.0",
+  "description": "Manage your academic skills, preferences, and documents all in one place.",
+  "icons": {
+    "128": "skillsync_logo.png"
+  },
+  "permissions": ["storage", "scripting", "activeTab", "downloads"],
+  "host_permissions": ["https://canvas.its.virginia.edu/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SkillSync",
+    "default_icon": "skillsync_logo.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://canvas.its.virginia.edu/*"],
+      "js": ["content.js"]
+    }
+  ]
+  ,
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "lib/pdf.min.js",
+        "lib/pdf.worker.min.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
