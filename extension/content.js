@@ -94,58 +94,48 @@ async function loadDataOnPage() {
     // Get export status once
     const exportStatus = await chrome.storage.local.get('csvExported');
 
-    // Top 3 Job Matches Section - only show if CSV has been exported
+    // Top 3 Job Matches Section - show results produced by local server if available
     if (exportStatus.csvExported) {
       const jobMatchesHeader = document.createElement("div");
-      jobMatchesHeader.innerHTML = "<strong style='color: #4CAF50; font-size: 13px;'>⭐ TOP 3 MATCHES</strong>";
+      jobMatchesHeader.innerHTML = "<strong style='color: #4CAF50; font-size: 13px;'>⭐ TOP MATCHES</strong>";
       jobMatchesHeader.style.marginBottom = "8px";
       content.appendChild(jobMatchesHeader);
 
-      // Mock job matches with similarity scores, descriptions and links
-      // Mock job matches with similarity scores and links (descriptions removed)
-      const jobMatches = [
-        {
-          name: "Security Analyst Intern",
-          score: 0.773,
-          link: "https://app.joinhandshake.com/job-search/10426653?query=cyber&per_page=25&jobType=3&sort=relevance&page=1"
-        },
-        {
-          name: "Software Engineer Intern",
-          score: 0.7279,
-          link: "https://app.joinhandshake.com/job-search/10501983?per_page=25&jobType=3&sort=relevance&page=1"
-        },
-        {
-          name: "Intelligence Intern - Summer 2026 (Remote)",
-          score: 0.7209,
-          link: "https://app.joinhandshake.com/job-search/10455896?query=cyber&per_page=25&jobType=3&sort=relevance&page=1"
-        }
-      ];
+      // Read recommended jobs from storage
+      const rec = await chrome.storage.local.get('recommendedJobs');
+      const jobs = rec.recommendedJobs || [];
 
-      jobMatches.forEach(job => {
-        const titleLine = document.createElement('div');
-        titleLine.style.marginTop = '6px';
-        titleLine.style.padding = '6px';
-        titleLine.style.borderBottom = '1px solid #eee';
-        titleLine.style.fontSize = '11px';
-        titleLine.innerHTML = `⭐ <strong>${job.name}</strong> → ${(job.score * 100).toFixed(2)}%`;
+      if (jobs.length === 0) {
+        const noJobsDiv = document.createElement("div");
+        noJobsDiv.innerHTML = "<em style='color: #999; font-size: 12px;'>No recommendations available. Run the GO! export.</em>";
+        noJobsDiv.style.marginBottom = "15px";
+        content.appendChild(noJobsDiv);
+      } else {
+        jobs.forEach(job => {
+          const titleLine = document.createElement('div');
+          titleLine.style.marginTop = '6px';
+          titleLine.style.padding = '6px';
+          titleLine.style.borderBottom = '1px solid #eee';
+          titleLine.style.fontSize = '11px';
+          const pct = job.score ? (job.score * 100).toFixed(2) + '%' : 'n/a';
+          titleLine.innerHTML = `⭐ <strong>${job.job || job.job_name || job.name}</strong> → ${pct}`;
 
-        const link = document.createElement('a');
-        link.href = job.link;
-        link.target = '_blank';
-        link.style.display = 'block';
-        link.style.marginTop = '6px';
-        link.style.fontSize = '11px';
-        link.style.color = '#1976D2';
-        link.textContent = job.link;
-
-        content.appendChild(titleLine);
-        content.appendChild(link);
-      });
-    } else {
-      const noJobsDiv = document.createElement("div");
-      noJobsDiv.innerHTML = "<em style='color: #999; font-size: 12px;'>Hit the GO! button to see job matches</em>";
-      noJobsDiv.style.marginBottom = "15px";
-      content.appendChild(noJobsDiv);
+          if (job.job_link) {
+            const link = document.createElement('a');
+            link.href = job.job_link;
+            link.target = '_blank';
+            link.style.display = 'block';
+            link.style.marginTop = '6px';
+            link.style.fontSize = '11px';
+            link.style.color = '#1976D2';
+            link.textContent = job.job_link;
+            content.appendChild(titleLine);
+            content.appendChild(link);
+          } else {
+            content.appendChild(titleLine);
+          }
+        });
+      }
     }
 
     // Course Data Section

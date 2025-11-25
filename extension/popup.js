@@ -908,11 +908,18 @@ async function exportCoursesToCSV() {
   });
   
   // Set flag to show preferences in content.js dashboard
-  await chrome.storage.local.set({ csvExported: true });
-  
-  // Create download
-  downloadFile(csvContent, 'canvas_complete_data.csv', 'text/csv');
-  alert('Complete CSV file downloaded with courses, preferences, and document info!');
+  // Try to POST the CSV to the local processing server. If server is not running,
+  // fall back to downloading the CSV for manual processing.
+  try {
+    const result = await postCsvToServer(csvContent);
+    alert('CSV processed by local server. Recommendations updated.');
+    console.log('Server result:', result);
+  } catch (e) {
+    // If posting fails, fallback to download and set exported flag locally
+    await chrome.storage.local.set({ csvExported: true });
+    downloadFile(csvContent, 'canvas_complete_data.csv', 'text/csv');
+    alert('Local server not reachable — CSV downloaded instead.');
+  }
 }
 
 // JSON export removed — CSV only
@@ -953,6 +960,40 @@ function downloadFile(content, filename, mimeType) {
 
 // Add event listeners for export buttons
 document.getElementById('exportCSV').addEventListener('click', exportCoursesToCSV);
+
+// POST CSV to local processing server and display returned recommended jobs
+async function postCsvToServer(csvContent) {
+  try {
+    const formData = new FormData();
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    formData.append('file', blob, 'canvas_complete_data.csv');
+
+    const resp = await fetch('http://127.0.0.1:5000/process-csv', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error('Server error: ' + txt);
+    }
+
+    const json = await resp.json();
+
+    // Save recommended jobs to chrome.storage so content.js can read them
+    if (json.top_matches) {
+      await chrome.storage.local.set({ recommendedJobs: json.top_matches, csvExported: true });
+    } else {
+      // still mark exported so UI updates; clear recommendedJobs
+      await chrome.storage.local.set({ recommendedJobs: [], csvExported: true });
+    }
+
+    return json;
+  } catch (e) {
+    console.error('Failed to post CSV to server:', e);
+    throw e;
+  }
+}
 
 // Show export buttons after successful scrape
 async function checkAndShowExportButtons() {

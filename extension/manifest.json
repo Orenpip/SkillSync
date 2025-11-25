@@ -7,7 +7,7 @@
     "128": "skillsync_logo.png"
   },
   "permissions": ["storage", "scripting", "activeTab", "downloads"],
-  "host_permissions": ["https://canvas.its.virginia.edu/*"],
+  "host_permissions": ["https://canvas.its.virginia.edu/*", "http://localhost/*"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "SkillSync",

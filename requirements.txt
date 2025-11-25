@@ -1,0 +1,7 @@
+flask
+pandas
+nbformat
+spacy
+sentence-transformers
+scikit-learn
+numpy
